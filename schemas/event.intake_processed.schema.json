@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "task-manager.event.intake_processed",
+  "description": "Outcome of one task entry of a SOURCE_CONTROLLER_TASK intake message, so source-controller counts each source task once. Subject task-manager.event.intake_processed.pub (stream ALL_EVENT); headers team=<team_id>, Nats-Msg-Id=task-manager-<publisher_seq>.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publisher",
+    "publisher_seq",
+    "team_id",
+    "occurred_at",
+    "kind",
+    "intake_publisher_seq",
+    "intake_id",
+    "source_id",
+    "external_id",
+    "outcome",
+    "reason",
+    "task_ids",
+    "deduplicated_flow_ids"
+  ],
+  "properties": {
+    "publisher": {
+      "const": "task-manager"
+    },
+    "publisher_seq": {
+      "$ref": "defs.schema.json#/$defs/seq"
+    },
+    "team_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "occurred_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "kind": {
+      "const": "intake_processed"
+    },
+    "intake_publisher_seq": {
+      "$ref": "defs.schema.json#/$defs/seq"
+    },
+    "intake_id": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      ]
+    },
+    "source_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "external_id": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "outcome": {
+      "enum": ["accepted", "deduplicated", "rejected", "no_target"]
+    },
+    "reason": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "enum": ["invalid_source_task", "team_archived", "fanout_too_large"]
+        }
+      ]
+    },
+    "task_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "defs.schema.json#/$defs/id"
+      }
+    },
+    "deduplicated_flow_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "defs.schema.json#/$defs/id"
+      }
+    }
+  }
+}

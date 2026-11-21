@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "admin.list-tasks request",
+  "description": "Global task projection for admin-panel (GET /admin/tasks). Headers team=admin, admin_subject, request_id. body is absent on the first page and carries {after: <position from next>} afterwards.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["params"],
+  "properties": {
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "team_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "state": {
+          "$ref": "defs.schema.json#/$defs/state"
+        },
+        "tag": {
+          "$ref": "defs.schema.json#/$defs/tag"
+        },
+        "flow_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        }
+      }
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["after"],
+      "properties": {
+        "after": {
+          "description": "Continuation position of the (ingested_at DESC, team_id DESC, task_id DESC) order; admin-panel wraps it in its own cursor.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ingested_at", "team_id", "task_id"],
+          "properties": {
+            "ingested_at": {
+              "$ref": "defs.schema.json#/$defs/timestamp"
+            },
+            "team_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "task_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            }
+          }
+        }
+      }
+    }
+  }
+}

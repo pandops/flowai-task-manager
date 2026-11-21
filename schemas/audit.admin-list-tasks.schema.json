@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "task-manager.audit.admin-list-tasks",
+  "description": "Administrator read of the global task projection. Subject task-manager.audit.admin-list-tasks.pub (ALL_AUDIT); headers team=admin, request_id. changes carries the filters.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publisher",
+    "publisher_seq",
+    "occurred_at",
+    "source_service",
+    "actor_type",
+    "action",
+    "resource_type",
+    "resource_id",
+    "request_id",
+    "outcome",
+    "actor_subject"
+  ],
+  "properties": {
+    "publisher": {
+      "const": "task-manager"
+    },
+    "publisher_seq": {
+      "$ref": "defs.schema.json#/$defs/seq"
+    },
+    "occurred_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "source_service": {
+      "const": "task-manager"
+    },
+    "actor_type": {
+      "const": "administrator"
+    },
+    "action": {
+      "const": "admin-list-tasks"
+    },
+    "resource_type": {
+      "const": "task"
+    },
+    "resource_id": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      ]
+    },
+    "request_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "outcome": {
+      "enum": ["succeeded", "rejected"]
+    },
+    "reason": {
+      "type": "string"
+    },
+    "changes": {
+      "type": "object"
+    },
+    "actor_subject": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

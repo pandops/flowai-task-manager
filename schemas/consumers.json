@@ -1,0 +1,18 @@
+[
+  {
+    "durable": "task-manager-intake",
+    "stream": "SOURCE_CONTROLLER_TASK",
+    "filter_subjects": ["source-controller.task.*.sub"],
+    "ack_policy": "explicit",
+    "deliver_policy": "all",
+    "max_ack_pending": 1
+  },
+  {
+    "durable": "task-manager",
+    "stream": "ALL_EVENT",
+    "filter_subjects": ["*.event.*.sub", "executor.event.*.*.sub"],
+    "ack_policy": "explicit",
+    "deliver_policy": "all",
+    "max_ack_pending": 1
+  }
+]

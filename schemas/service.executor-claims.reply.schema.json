@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "service.executor-claims reply",
+  "description": "Status 200 with the claims task-manager still holds as current for that Executor. Error replies use error.reply.schema.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["executor_id", "claims"],
+  "properties": {
+    "executor_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["task_id", "attempt", "claim_seq"],
+        "properties": {
+          "task_id": {
+            "$ref": "defs.schema.json#/$defs/id"
+          },
+          "attempt": {
+            "$ref": "defs.schema.json#/$defs/id"
+          },
+          "claim_seq": {
+            "$ref": "defs.schema.json#/$defs/id"
+          }
+        }
+      }
+    }
+  }
+}

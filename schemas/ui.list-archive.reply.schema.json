@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ui.list-archive reply",
+  "description": "Status 200. Error replies use error.reply.schema.json.",
+  "$ref": "defs.schema.json#/$defs/page"
+}

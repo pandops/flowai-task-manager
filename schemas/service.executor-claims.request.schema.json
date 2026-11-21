@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "service.executor-claims request",
+  "description": "Caller executor-registry only, one request per successful heartbeat. Header team = team_id, request_id. lost_seq is the publisher_seq of executor-registry's latest executor_lost for the Executor (0 if none).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["params", "body"],
+  "properties": {
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {}
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["team_id", "executor_id", "claims", "lost_seq"],
+      "properties": {
+        "team_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "executor_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["task_id", "attempt", "claim_seq", "state"],
+            "properties": {
+              "task_id": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "attempt": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "claim_seq": {
+                "$ref": "defs.schema.json#/$defs/id"
+              },
+              "state": {
+                "enum": ["created", "pending", "running"]
+              }
+            }
+          }
+        },
+        "lost_seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        }
+      }
+    }
+  }
+}

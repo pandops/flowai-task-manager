@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ui.cancel reply",
+  "description": "Status 202 (command sent or already requested), 200 (cancelled directly), 404 not_found, 409 task_terminal. Error replies use error.reply.schema.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "control_id", "control", "status"],
+  "properties": {
+    "task_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "control_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "control": {
+      "const": "cancel"
+    },
+    "status": {
+      "enum": ["requested", "cancelled"]
+    }
+  }
+}

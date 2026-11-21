@@ -1,0 +1,543 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "task-manager shared definitions",
+  "description": "Definitions referenced by the other task-manager schemas. Not a message by itself.",
+  "$defs": {
+    "id": {
+      "description": "Positive 64-bit FlowAI identifier (design rule 43).",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9223372036854775807
+    },
+    "taskName": {
+      "description": "Immutable task name <team_name>-<task_id>, stored when the task is created.",
+      "type": "string",
+      "minLength": 1
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9223372036854775807
+    },
+    "timestamp": {
+      "description": "RFC 3339 UTC with milliseconds.",
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "tag": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,128}$"
+    },
+    "state": {
+      "enum": [
+        "queued",
+        "created",
+        "pending",
+        "running",
+        "finished",
+        "failed",
+        "cancelled"
+      ]
+    },
+    "imageSource": {
+      "enum": ["flow_default", "team_default"]
+    },
+    "releaseReason": {
+      "enum": [
+        "pending_timeout",
+        "executor_lost",
+        "executor_restarted",
+        "executor_shutdown",
+        "claim_missing"
+      ]
+    },
+    "pendingReason": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,127}$"
+    },
+    "errorCode": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,127}$"
+    },
+    "cursor": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "claimTokenPayload": {
+      "description": "Payload of a claim token (agents.md rule 12): token = base64url(payload JSON) '.' base64url(Ed25519 signature over the payload bytes), no padding. No expiry: valid exactly while the claim is current (design rule 41).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["team_id", "task_id", "attempt", "claim_seq", "executor_id"],
+      "properties": {
+        "team_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "task_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "attempt": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "claim_seq": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "executor_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      }
+    },
+    "claim": {
+      "description": "One claim of a task: (task_id, attempt, claim_seq).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempt",
+        "claim_seq",
+        "executor_id",
+        "claimed_at",
+        "resolved_image",
+        "image_source",
+        "pending_reasons",
+        "released_reason",
+        "ended_at"
+      ],
+      "properties": {
+        "attempt": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "claim_seq": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "executor_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "claimed_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        },
+        "resolved_image": {
+          "type": "string",
+          "minLength": 1
+        },
+        "image_source": {
+          "$ref": "defs.schema.json#/$defs/imageSource"
+        },
+        "pending_reasons": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/pendingReason"
+          }
+        },
+        "released_reason": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/releaseReason"
+            }
+          ]
+        },
+        "ended_at": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/timestamp"
+            }
+          ]
+        }
+      }
+    },
+    "attempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attempt", "state", "failure_reason", "retryable", "claims"],
+      "properties": {
+        "attempt": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "state": {
+          "$ref": "defs.schema.json#/$defs/state"
+        },
+        "failure_reason": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/errorCode"
+            }
+          ]
+        },
+        "retryable": {
+          "type": ["boolean", "null"]
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/claim"
+          }
+        }
+      }
+    },
+    "historyEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "history_seq",
+        "kind",
+        "publisher",
+        "publisher_seq",
+        "occurred_at",
+        "attempt",
+        "claim_seq",
+        "executor_id",
+        "reason"
+      ],
+      "properties": {
+        "history_seq": {
+          "$ref": "defs.schema.json#/$defs/seq"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "publisher_seq": {
+          "$ref": "defs.schema.json#/$defs/seq"
+        },
+        "occurred_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        },
+        "attempt": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "claim_seq": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/id"
+            }
+          ]
+        },
+        "executor_id": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/id"
+            }
+          ]
+        },
+        "reason": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "taskSummary": {
+      "description": "List entry of a team task read. No payload, rendered prompt or execution parameters.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "task_name",
+        "team_id",
+        "flow_id",
+        "source_id",
+        "external_id",
+        "required_tag",
+        "current_state",
+        "attempt",
+        "executor_id",
+        "ingested_at",
+        "claimed_at",
+        "completed_at"
+      ],
+      "properties": {
+        "task_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "task_name": {
+          "$ref": "defs.schema.json#/$defs/taskName"
+        },
+        "team_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "flow_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "source_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "external_id": {
+          "type": "string"
+        },
+        "required_tag": {
+          "$ref": "defs.schema.json#/$defs/tag"
+        },
+        "current_state": {
+          "$ref": "defs.schema.json#/$defs/state"
+        },
+        "attempt": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "executor_id": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/id"
+            }
+          ]
+        },
+        "ingested_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        },
+        "claimed_at": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/timestamp"
+            }
+          ]
+        },
+        "completed_at": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/timestamp"
+            }
+          ]
+        }
+      }
+    },
+    "taskCard": {
+      "description": "Task card: current state, attempts, claims with Executor and image, reasons and the next due time.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "task_name",
+        "team_id",
+        "flow_id",
+        "source_id",
+        "external_id",
+        "intake_id",
+        "required_tag",
+        "current_state",
+        "attempt",
+        "claim_seq",
+        "executor_id",
+        "resolved_image",
+        "image_source",
+        "ingested_at",
+        "claimed_at",
+        "completed_at",
+        "next_due_at",
+        "next_due_kind",
+        "execution_revision_id",
+        "failure_retry_count",
+        "failure_retry_wait_seconds",
+        "pending_limit_seconds",
+        "release_delay_seconds",
+        "final_reason",
+        "archived",
+        "attempts",
+        "history"
+      ],
+      "properties": {
+        "task_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "task_name": {
+          "$ref": "defs.schema.json#/$defs/taskName"
+        },
+        "team_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "flow_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "source_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "external_id": {
+          "type": "string"
+        },
+        "intake_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "required_tag": {
+          "$ref": "defs.schema.json#/$defs/tag"
+        },
+        "current_state": {
+          "$ref": "defs.schema.json#/$defs/state"
+        },
+        "attempt": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "claim_seq": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "executor_id": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/id"
+            }
+          ]
+        },
+        "resolved_image": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "image_source": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/imageSource"
+            }
+          ]
+        },
+        "ingested_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp"
+        },
+        "claimed_at": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/timestamp"
+            }
+          ]
+        },
+        "completed_at": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/timestamp"
+            }
+          ]
+        },
+        "next_due_at": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/timestamp"
+            }
+          ]
+        },
+        "next_due_kind": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "enum": ["release", "retry"]
+            }
+          ]
+        },
+        "execution_revision_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "failure_retry_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failure_retry_wait_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pending_limit_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "release_delay_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "final_reason": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "archived": {
+          "type": "boolean"
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/attempt"
+          }
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/historyEntry"
+          }
+        }
+      }
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items", "next_cursor"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "defs.schema.json#/$defs/taskSummary"
+          }
+        },
+        "next_cursor": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "defs.schema.json#/$defs/cursor"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

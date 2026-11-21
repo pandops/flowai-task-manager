@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "task-manager.audit.cancel",
+  "description": "Operator cancel request, accepted or rejected after authentication (agents.md rule 10). Subject task-manager.audit.cancel.pub (ALL_AUDIT); headers team=<team_id>, request_id. changes.control_id carries the assigned control.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publisher",
+    "publisher_seq",
+    "occurred_at",
+    "source_service",
+    "actor_type",
+    "action",
+    "resource_type",
+    "resource_id",
+    "request_id",
+    "outcome",
+    "team_id",
+    "actor_id"
+  ],
+  "properties": {
+    "publisher": {
+      "const": "task-manager"
+    },
+    "publisher_seq": {
+      "$ref": "defs.schema.json#/$defs/seq"
+    },
+    "occurred_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "source_service": {
+      "const": "task-manager"
+    },
+    "actor_type": {
+      "const": "operator"
+    },
+    "action": {
+      "const": "cancel"
+    },
+    "resource_type": {
+      "const": "task"
+    },
+    "resource_id": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      ]
+    },
+    "request_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "outcome": {
+      "enum": ["succeeded", "rejected"]
+    },
+    "reason": {
+      "type": "string"
+    },
+    "changes": {
+      "type": "object"
+    },
+    "team_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "actor_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    }
+  }
+}

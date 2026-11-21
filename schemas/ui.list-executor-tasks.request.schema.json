@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ui.list-executor-tasks request",
+  "description": "Current tasks whose current claim belongs to one Executor of the header team. Headers team (decimal, never admin), operator_id, request_id, optional team_name.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["params"],
+  "properties": {
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["executor_id"],
+      "properties": {
+        "team_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "status": {
+          "$ref": "defs.schema.json#/$defs/state"
+        },
+        "period": {
+          "enum": ["day", "week", "month"]
+        },
+        "search": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "time_zone": {
+          "type": "string"
+        },
+        "flow_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "source_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "tag": {
+          "$ref": "defs.schema.json#/$defs/tag"
+        },
+        "limit": {
+          "enum": [10, 25, 50, 100]
+        },
+        "cursor": {
+          "type": "string"
+        },
+        "executor_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "task-manager.task.<team>.<tag>.<flow> queue message",
+  "description": "Claimable task on TASK_MANAGER_TASK (work-queue), consumed through tasks-<team_id>-<tag_hash>. Headers team=<team_id>, Nats-Msg-Id=task-manager-<publisher_seq>. Carries no secret, LiteLLM key, claim token, model alias or launch-parameter value.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publisher",
+    "publisher_seq",
+    "team_id",
+    "occurred_at",
+    "task_id",
+    "flow_id",
+    "source_id",
+    "external_id",
+    "intake_id",
+    "attempt",
+    "claim_seq",
+    "required_tag",
+    "payload",
+    "project_id",
+    "environment_id",
+    "execution",
+    "resolved_image",
+    "image_source",
+    "pending_limit_seconds"
+  ],
+  "properties": {
+    "publisher": {
+      "const": "task-manager"
+    },
+    "publisher_seq": {
+      "$ref": "defs.schema.json#/$defs/seq"
+    },
+    "team_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "occurred_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "task_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "flow_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "source_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "external_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "intake_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "attempt": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "claim_seq": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "required_tag": {
+      "$ref": "defs.schema.json#/$defs/tag"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "project_id": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "maxLength": 128
+        }
+      ]
+    },
+    "environment_id": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      ]
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "execution_revision_id",
+        "required_tag",
+        "rendered_prompt",
+        "execution_parameters"
+      ],
+      "properties": {
+        "execution_revision_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "required_tag": {
+          "$ref": "defs.schema.json#/$defs/tag"
+        },
+        "rendered_prompt": {
+          "type": "string"
+        },
+        "execution_parameters": {
+          "type": "object"
+        }
+      }
+    },
+    "resolved_image": {
+      "type": "string",
+      "minLength": 1
+    },
+    "image_source": {
+      "$ref": "defs.schema.json#/$defs/imageSource"
+    },
+    "pending_limit_seconds": {
+      "type": "integer",
+      "minimum": 1
+    }
+  }
+}

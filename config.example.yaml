@@ -1,0 +1,30 @@
+# task-manager configuration (/etc/flowai/config.yaml). Every key is shown;
+# secrets come from mounted secret files rendered into this document.
+http:
+  # Serves only GET /v1/livez and GET /v1/readyz.
+  listen: ":8080"
+db:
+  host: postgres
+  port: 5432
+  database: flowai
+  user: task_manager
+  password: change-me
+  # The only schema task-manager reads or writes.
+  schema: task_manager_schema
+  # verify-full is the only accepted mode.
+  sslmode: verify-full
+  ca_file: /run/flowai/stand-ca/ca.pem
+nats:
+  # tls:// only; operator-mode user credentials are required.
+  url: tls://nats:4222
+  ca_file: /run/flowai/stand-ca/ca.pem
+  credentials_file: /run/flowai/nats/user.creds
+  inbox_prefix: _INBOX.task-manager
+  request_timeout: 5s
+claim_token:
+  # Standard base64 of a 32-byte Ed25519 seed.
+  signing_key: BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc=
+cursor_keys:
+  # The first key signs new list cursors; later keys only verify.
+  - id: 1
+    key_hex: 0909090909090909090909090909090909090909090909090909090909090909

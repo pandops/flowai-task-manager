@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ui.list-executor-tasks reply",
+  "description": "Status 200; a foreign Executor gives an empty page. Error replies use error.reply.schema.json.",
+  "$ref": "defs.schema.json#/$defs/page"
+}

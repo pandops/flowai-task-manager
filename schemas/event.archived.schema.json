@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "task-manager.event.archived",
+  "description": "The final task record was written to task_archive and the current task deleted in one transaction. Subject task-manager.event.archived.pub (stream ALL_EVENT); headers team=<team_id>, Nats-Msg-Id=task-manager-<publisher_seq>.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publisher",
+    "publisher_seq",
+    "team_id",
+    "occurred_at",
+    "kind",
+    "task_id",
+    "task_name",
+    "flow_id",
+    "source_id",
+    "final_state",
+    "final_reason",
+    "attempts"
+  ],
+  "properties": {
+    "publisher": {
+      "const": "task-manager"
+    },
+    "publisher_seq": {
+      "$ref": "defs.schema.json#/$defs/seq"
+    },
+    "team_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "occurred_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "kind": {
+      "const": "archived"
+    },
+    "task_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "task_name": {
+      "$ref": "defs.schema.json#/$defs/taskName"
+    },
+    "flow_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "source_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "final_state": {
+      "enum": ["finished", "failed", "cancelled"]
+    },
+    "final_reason": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "attempts": {
+      "$ref": "defs.schema.json#/$defs/id"
+    }
+  }
+}

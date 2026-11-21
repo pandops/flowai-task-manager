@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "task-manager.event.cancelled",
+  "description": "task-manager cancelled a task directly: an unclaimed task, the claim of a removed Executor, or a claim released while a cancel was pending. Subject task-manager.event.cancelled.pub (stream ALL_EVENT); headers team=<team_id>, Nats-Msg-Id=task-manager-<publisher_seq>.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publisher",
+    "publisher_seq",
+    "team_id",
+    "occurred_at",
+    "kind",
+    "task_id",
+    "task_name",
+    "attempt",
+    "claim_seq",
+    "executor_id",
+    "control_id"
+  ],
+  "properties": {
+    "publisher": {
+      "const": "task-manager"
+    },
+    "publisher_seq": {
+      "$ref": "defs.schema.json#/$defs/seq"
+    },
+    "team_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "occurred_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "kind": {
+      "const": "cancelled"
+    },
+    "task_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "task_name": {
+      "$ref": "defs.schema.json#/$defs/taskName"
+    },
+    "attempt": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "claim_seq": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      ]
+    },
+    "executor_id": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      ]
+    },
+    "control_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    }
+  }
+}
