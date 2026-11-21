@@ -118,7 +118,7 @@ jobs:
 
       - name: Unit tests
         shell: bash
-        run: go test -mod=readonly -count=1 -coverpkg=./... -v ./...
+        run: go test -mod=readonly -count=1 -coverpkg=./... -v ./... 2>&1 | tee "$RUNNER_TEMP/qualification-unit.log"
 
       - name: PostgreSQL integration tests
         shell: bash
@@ -127,10 +127,73 @@ jobs:
           docker pull --platform linux/amd64 "$postgres"
           # The existing test fixture resolves this alias in the runner's Docker store.
           docker tag "$postgres" docker.io/library/postgres:16
-          go test -mod=readonly -count=1 -tags=integration -v ./test
+          go test -mod=readonly -count=1 -tags=integration -v ./test 2>&1 | tee "$RUNNER_TEMP/qualification-integration.log"
 
       - name: Build local Linux image
         shell: bash
         run: |
-          docker build --platform linux/amd64 -f Containerfile --iidfile "$RUNNER_TEMP/task-manager.iid" .
+          docker build --platform linux/amd64 -f Containerfile --iidfile "$RUNNER_TEMP/task-manager.iid" . 2>&1 | tee "$RUNNER_TEMP/qualification-build.log"
           cat "$RUNNER_TEMP/task-manager.iid"
+
+      - name: Verify and package the qualified OCI image
+        shell: bash
+        env:
+          QUALIFICATION_INPUTS: ${{ toJSON(inputs) }}
+        run: |
+          set -euo pipefail
+          [[ "$(skopeo --version)" == 'skopeo version 1.13.3' ]]
+          [[ "$(jq --version)" == 'jq-1.7' ]]
+          source_tree="$(git rev-parse "$GITHUB_SHA^{tree}")"
+          workflow_sha="$(sha256sum .github/workflows/qualify.yml | cut -d ' ' -f1)"
+          image_id="$(cat "$RUNNER_TEMP/task-manager.iid")"
+          [[ "$image_id" =~ ^sha256:[a-f0-9]{64}$ ]]
+          [[ "$(docker image inspect --format '{{ .Id }}' "$image_id")" == "$image_id" ]]
+          layout="$RUNNER_TEMP/qualified-oci-layout"
+          skopeo copy --format oci "docker-daemon:$image_id" "oci:$layout:qualified"
+          manifest="$(jq -er '
+            select(.schemaVersion == 2 and (.manifests | length) == 1)
+            | .manifests[0]
+            | select(.mediaType == "application/vnd.oci.image.manifest.v1+json")
+            | .digest | select(test("^sha256:[a-f0-9]{64}$"))
+          ' "$layout/index.json")"
+          cd "$layout"
+          manifest_path="blobs/sha256/${manifest#sha256:}"
+          printf '%s  %s\n' "${manifest#sha256:}" "$manifest_path" | sha256sum --check
+          config="$(jq -er '.config.digest | select(test("^sha256:[a-f0-9]{64}$"))' "$manifest_path")"
+          skopeo inspect --config "docker-daemon:$image_id" | jq -cS . > "$RUNNER_TEMP/source-oci-config.json"
+          jq -cS . "blobs/sha256/${config#sha256:}" | cmp "$RUNNER_TEMP/source-oci-config.json" -
+          jq -er '
+            [.config, .layers[]][].digest
+            | if test("^sha256:[a-f0-9]{64}$") then sub("^sha256:"; "") else error("invalid OCI digest") end
+            | "\(.)  blobs/sha256/\(.)"
+          ' "$manifest_path" | sha256sum --check
+          jq -e '.os == "linux" and .architecture == "amd64"' "blobs/sha256/${config#sha256:}" >/dev/null
+
+          artifact="$RUNNER_TEMP/qualified-oci"
+          mkdir "$artifact"
+          tar -cf "$artifact/image.oci.tar" oci-layout index.json blobs
+          mv "$RUNNER_TEMP"/qualification-{unit,integration,build}.log "$artifact/"
+          cd "$artifact"
+          jq -n --arg repository "$GITHUB_REPOSITORY" --arg ref "$GITHUB_REF" \
+            --arg source "$GITHUB_SHA" --arg run "$GITHUB_RUN_ID" --arg attempt "$GITHUB_RUN_ATTEMPT" \
+            --arg sourceTree "$source_tree" --arg workflowSha "$workflow_sha" --argjson inputs "$QUALIFICATION_INPUTS" \
+            --arg imageId "$image_id" --arg manifest "$manifest" --arg config "$config" \
+            '{repository:$repository,ref:$ref,source:$source,run:$run,attempt:$attempt,sourceTree:$sourceTree,workflowSha256:$workflowSha,inputs:$inputs,imageId:$imageId,manifest:$manifest,config:$config}' > receipt.json
+          sha256sum image.oci.tar receipt.json qualification-{unit,integration,build}.log > SHA256SUMS
+          sha256sum --check SHA256SUMS
+
+      - name: Upload qualified OCI archive
+        if: ${{ success() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: qualified-oci-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/qualified-oci/image.oci.tar
+            ${{ runner.temp }}/qualified-oci/receipt.json
+            ${{ runner.temp }}/qualified-oci/SHA256SUMS
+            ${{ runner.temp }}/qualified-oci/qualification-unit.log
+            ${{ runner.temp }}/qualified-oci/qualification-integration.log
+            ${{ runner.temp }}/qualified-oci/qualification-build.log
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
