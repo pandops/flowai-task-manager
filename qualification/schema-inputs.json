@@ -1,0 +1,62 @@
+[
+  {
+    "digest": "sha256:6f978ee02b529788ec258eb053b076cdf231d8b274cf3046977cdfe4ea4bd3bd",
+    "path": "schemas/task.schema.json",
+    "repository": "pandops/flowai-source-controller",
+    "sourceRevision": "c48fd383225e3647f2447d5874086bfaf0b0c670"
+  },
+  {
+    "digest": "sha256:3845f799cd6581ea818915007260462a2458fe8d202094dbc6b4273fd148ae4f",
+    "path": "schemas/event.team_created.schema.json",
+    "repository": "pandops/flowai-team-registry",
+    "sourceRevision": "5463b8022fbdd6c7da908dff2cb1de4a5114aa13"
+  },
+  {
+    "digest": "sha256:d26e3cea5ff72963de45b933c2eff365d04280cc00fee3c6e76668778f597077",
+    "path": "schemas/defs.schema.json",
+    "repository": "pandops/flowai-flow-registry",
+    "sourceRevision": "c2c5de0399f3d048434f36041800023891b165c7"
+  },
+  {
+    "digest": "sha256:c87a0fd1132efebcc6a2ce9667abc4fc102930267dc24552e8d9ec5721ee2b9f",
+    "path": "schemas/service.targets.request.schema.json",
+    "repository": "pandops/flowai-flow-registry",
+    "sourceRevision": "c2c5de0399f3d048434f36041800023891b165c7"
+  },
+  {
+    "digest": "sha256:cac52e3acd391176dacbbd938a36d38ad095de5ca05d9ad8c756601621fddf16",
+    "path": "schemas/service.targets.reply.schema.json",
+    "repository": "pandops/flowai-flow-registry",
+    "sourceRevision": "c2c5de0399f3d048434f36041800023891b165c7"
+  },
+  {
+    "digest": "sha256:4ad752c31022ed15bb443237535fb1a7df73679659c3c4612c6e33b2028add65",
+    "path": "schemas/event.executor_lost.schema.json",
+    "repository": "pandops/flowai-executor-registry",
+    "sourceRevision": "e257f61cfaac8249615477a4c54815c2f69637e1"
+  },
+  {
+    "digest": "sha256:38040f017cd7c412165e72b92f478c7e0afa677f72802781a35c43e52def61c9",
+    "path": "schemas/event.executor_registered.schema.json",
+    "repository": "pandops/flowai-executor-registry",
+    "sourceRevision": "e257f61cfaac8249615477a4c54815c2f69637e1"
+  },
+  {
+    "digest": "sha256:b62158affd396f7412ed69e8b30126546442b83760be96c4b5bdfc8fb1105ef4",
+    "path": "schemas/event.executor_removed.schema.json",
+    "repository": "pandops/flowai-executor-registry",
+    "sourceRevision": "e257f61cfaac8249615477a4c54815c2f69637e1"
+  },
+  {
+    "digest": "sha256:1829df58a09a070325cb35a6122ceab2bd04967df4fe8ccc36d432a9980b866d",
+    "path": "schemas/claim-token-request.schema.json",
+    "repository": "pandops/flowai-executor-docker-openhands",
+    "sourceRevision": "df886aa03b31f297e00f38b332fe5404063b9d8d"
+  },
+  {
+    "digest": "sha256:6928d3e310459c155814216b7206e4da888be58982f96bf51dbef3188821849e",
+    "path": "schemas/executor-event.schema.json",
+    "repository": "pandops/flowai-executor-docker-openhands",
+    "sourceRevision": "df886aa03b31f297e00f38b332fe5404063b9d8d"
+  }
+]
