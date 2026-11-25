@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ui.get-task reply",
+  "description": "Status 200 or 404 not_found (unknown and foreign alike). Error replies use error.reply.schema.json.",
+  "$ref": "defs.schema.json#/$defs/taskCard"
+}

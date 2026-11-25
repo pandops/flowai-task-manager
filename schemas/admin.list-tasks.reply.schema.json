@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "admin.list-tasks reply",
+  "description": "Status 200; entries ordered (ingested_at DESC, team_id DESC, task_id DESC) over current and archived tasks. Error replies use error.reply.schema.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["items", "next"],
+  "properties": {
+    "next": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "description": "Continuation position of the (ingested_at DESC, team_id DESC, task_id DESC) order; admin-panel wraps it in its own cursor.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ingested_at", "team_id", "task_id"],
+          "properties": {
+            "ingested_at": {
+              "$ref": "defs.schema.json#/$defs/timestamp"
+            },
+            "team_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            },
+            "task_id": {
+              "$ref": "defs.schema.json#/$defs/id"
+            }
+          }
+        }
+      ]
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "task_id",
+          "team_id",
+          "flow_id",
+          "source_id",
+          "external_id",
+          "required_tag",
+          "current_state",
+          "owner_command_id",
+          "executor_id",
+          "ingested_at",
+          "claimed_at"
+        ],
+        "properties": {
+          "task_id": {
+            "$ref": "defs.schema.json#/$defs/id"
+          },
+          "team_id": {
+            "$ref": "defs.schema.json#/$defs/id"
+          },
+          "flow_id": {
+            "$ref": "defs.schema.json#/$defs/id"
+          },
+          "source_id": {
+            "$ref": "defs.schema.json#/$defs/id"
+          },
+          "external_id": {
+            "type": "string"
+          },
+          "required_tag": {
+            "$ref": "defs.schema.json#/$defs/tag"
+          },
+          "current_state": {
+            "$ref": "defs.schema.json#/$defs/state"
+          },
+          "owner_command_id": {
+            "type": "null"
+          },
+          "executor_id": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "defs.schema.json#/$defs/id"
+              }
+            ]
+          },
+          "ingested_at": {
+            "$ref": "defs.schema.json#/$defs/timestamp"
+          },
+          "claimed_at": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "defs.schema.json#/$defs/timestamp"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ui.list-attempts reply",
+  "description": "Status 200 or 404 not_found. Error replies use error.reply.schema.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "items"],
+  "properties": {
+    "task_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "defs.schema.json#/$defs/attempt"
+      }
+    }
+  }
+}

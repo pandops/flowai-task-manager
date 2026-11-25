@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "task-manager.event.retry_scheduled",
+  "description": "A retryable failure starts the next attempt after the frozen retry wait. Subject task-manager.event.retry_scheduled.pub (stream ALL_EVENT); headers team=<team_id>, Nats-Msg-Id=task-manager-<publisher_seq>.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publisher",
+    "publisher_seq",
+    "team_id",
+    "occurred_at",
+    "kind",
+    "task_id",
+    "task_name",
+    "attempt",
+    "next_attempt",
+    "due_at",
+    "failure_reason"
+  ],
+  "properties": {
+    "publisher": {
+      "const": "task-manager"
+    },
+    "publisher_seq": {
+      "$ref": "defs.schema.json#/$defs/seq"
+    },
+    "team_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "occurred_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "kind": {
+      "const": "retry_scheduled"
+    },
+    "task_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "task_name": {
+      "$ref": "defs.schema.json#/$defs/taskName"
+    },
+    "attempt": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "next_attempt": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "due_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "failure_reason": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "defs.schema.json#/$defs/errorCode"
+        }
+      ]
+    }
+  }
+}

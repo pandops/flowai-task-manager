@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "service.claim-current reply",
+  "description": "Status 200. Error replies use error.reply.schema.json.",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["current", "team_id", "flow_id", "execution_revision_id"],
+      "properties": {
+        "current": {
+          "const": true
+        },
+        "team_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "flow_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "execution_revision_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["current", "reason"],
+      "properties": {
+        "current": {
+          "const": false
+        },
+        "reason": {
+          "enum": [
+            "unknown_task",
+            "claim_ended",
+            "executor_mismatch",
+            "task_terminal"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "executor.claim-token request",
+  "description": "Executor request on task-manager.executor.<executor_id>.claim-token.pub; the Executor comes from the subject, the team from that executor_id (headers ignored). created_publisher_seq names the Executor's created message.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["params", "body"],
+  "properties": {
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {}
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id", "attempt", "claim_seq", "created_publisher_seq"],
+      "properties": {
+        "task_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "attempt": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "claim_seq": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "created_publisher_seq": {
+          "$ref": "defs.schema.json#/$defs/seq"
+        }
+      }
+    }
+  }
+}

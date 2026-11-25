@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ui.cancel request",
+  "description": "Operator cancel of one task of the header team; idempotent by (team_id, task_id, operator_id, action). Headers team (decimal, never admin), operator_id, request_id, optional team_name.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["params"],
+  "properties": {
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id"],
+      "properties": {
+        "team_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "task_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      }
+    },
+    "body": {
+      "type": ["object", "null"]
+    }
+  }
+}

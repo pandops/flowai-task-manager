@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ui.list-tasks request",
+  "description": "Current tasks of the header team, ordered (ingested_at DESC, task_id DESC). Headers team (decimal, never admin), operator_id, request_id, optional team_name. Query values travel as strings; identifiers as JSON numbers.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["params"],
+  "properties": {
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "team_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "status": {
+          "$ref": "defs.schema.json#/$defs/state"
+        },
+        "period": {
+          "enum": ["day", "week", "month"]
+        },
+        "search": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "time_zone": {
+          "type": "string"
+        },
+        "flow_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "source_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "tag": {
+          "$ref": "defs.schema.json#/$defs/tag"
+        },
+        "limit": {
+          "enum": [10, 25, 50, 100]
+        },
+        "cursor": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ui.get-task request",
+  "description": "One current task of the header team. Headers team (decimal, never admin), operator_id, request_id, optional team_name.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["params"],
+  "properties": {
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id"],
+      "properties": {
+        "team_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "task_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      }
+    }
+  }
+}

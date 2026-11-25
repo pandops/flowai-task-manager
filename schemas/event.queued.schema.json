@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "task-manager.event.queued",
+  "description": "A new task or a new attempt or claim was published to its task queue; carries the intake_id of the source task entry that created the task. Subject task-manager.event.queued.pub (stream ALL_EVENT); headers team=<team_id>, Nats-Msg-Id=task-manager-<publisher_seq>.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publisher",
+    "publisher_seq",
+    "team_id",
+    "occurred_at",
+    "kind",
+    "task_id",
+    "task_name",
+    "attempt",
+    "claim_seq",
+    "flow_id",
+    "source_id",
+    "required_tag",
+    "intake_id",
+    "task_publisher_seq"
+  ],
+  "properties": {
+    "publisher": {
+      "const": "task-manager"
+    },
+    "publisher_seq": {
+      "$ref": "defs.schema.json#/$defs/seq"
+    },
+    "team_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "occurred_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "kind": {
+      "const": "queued"
+    },
+    "task_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "task_name": {
+      "$ref": "defs.schema.json#/$defs/taskName"
+    },
+    "attempt": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "claim_seq": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "flow_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "source_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "required_tag": {
+      "$ref": "defs.schema.json#/$defs/tag"
+    },
+    "intake_id": {
+      "$ref": "defs.schema.json#/$defs/id"
+    },
+    "task_publisher_seq": {
+      "$ref": "defs.schema.json#/$defs/seq"
+    }
+  }
+}

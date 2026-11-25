@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "service.claim-current request",
+  "description": "Callers env-registry and model-registry only. Header team = team_id of the claim, request_id. Carries the claim identity read from a verified claim token, never the token.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["params"],
+  "properties": {
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["team_id", "task_id", "attempt", "claim_seq", "executor_id"],
+      "properties": {
+        "team_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "task_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "attempt": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "claim_seq": {
+          "$ref": "defs.schema.json#/$defs/id"
+        },
+        "executor_id": {
+          "$ref": "defs.schema.json#/$defs/id"
+        }
+      }
+    }
+  }
+}
